@@ -16,6 +16,7 @@ ns.SOURCES = {
 	loot   = { label = "Butin",       color = { 1.00, 0.82, 0.00 }, kind = "income",  order = 1 },
 	sell   = { label = "Vente",       color = { 0.40, 0.80, 1.00 }, kind = "income",  order = 2 },
 	quest  = { label = "Quête",       color = { 0.60, 1.00, 0.60 }, kind = "income",  order = 3 },
+	reward = { label = "Récompense",  color = { 0.30, 0.90, 0.80 }, kind = "income",  order = 4 },
 	mail   = { label = "Courrier/HV", color = { 0.85, 0.60, 1.00 }, kind = "both",    order = 4 },
 	trade  = { label = "Échange",     color = { 1.00, 0.70, 0.40 }, kind = "both",    order = 5 },
 	buy    = { label = "Achat",       color = { 1.00, 0.45, 0.45 }, kind = "expense", order = 6 },
@@ -24,13 +25,13 @@ ns.SOURCES = {
 }
 
 -- Ordre de parcours stable des sources.
-ns.SOURCE_ORDER = { "loot", "sell", "quest", "mail", "trade", "buy", "repair", "other" }
+ns.SOURCE_ORDER = { "loot", "sell", "quest", "reward", "mail", "trade", "buy", "repair", "other" }
 
 -- ─────────────────────────────────────────────────────────────────────────
 -- État interne
 -- ─────────────────────────────────────────────────────────────────────────
 local context = nil        -- "merchant" | "mail" | "trade" | nil (fenêtre ouverte)
-local pending = nil        -- "loot" | "quest" (drapeau ponctuel one-shot)
+local pending = nil        -- "loot" | "quest" | "reward" (drapeau ponctuel one-shot)
 local pendingRepair = false
 
 -- Annule le drapeau ponctuel s'il n'a pas été consommé par un PLAYER_MONEY.
@@ -51,6 +52,8 @@ function Tracking:ResolveSource(delta)
 		src = "loot"
 	elseif pending == "quest" then
 		src = "quest"
+	elseif pending == "reward" then
+		src = "reward"
 	elseif context == "merchant" then
 		if delta > 0 then
 			src = "sell"
@@ -81,6 +84,7 @@ local EVENTS = {
 	"TRADE_SHOW", "TRADE_CLOSED",
 	"CHAT_MSG_MONEY",
 	"QUEST_TURNED_IN",
+	"SHOW_LOOT_TOAST",
 }
 for _, e in ipairs(EVENTS) do frame:RegisterEvent(e) end
 
@@ -104,6 +108,14 @@ frame:SetScript("OnEvent", function(_, event, ...)
 	elseif event == "QUEST_TURNED_IN" then
 		pending = "quest"
 		clearPendingSoon()
+	elseif event == "SHOW_LOOT_TOAST" then
+		-- Récompenses de contenu (expéditions, délves, missions, bonus) :
+		-- l'or arrive via une bannière de récompense, type "money".
+		local typeIdentifier = ...
+		if typeIdentifier == "money" then
+			pending = "reward"
+			clearPendingSoon()
+		end
 	end
 end)
 

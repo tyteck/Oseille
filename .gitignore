@@ -8,3 +8,6 @@ Thumbs.db
 # Sauvegardes WoW (ne doivent pas être versionnées)
 *.bak
 WTF/
+
+# Config locale Claude Code
+.claude/settings.local.json
