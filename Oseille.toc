@@ -1,0 +1,14 @@
+## Interface: 120000,120001,120005
+## Title: Oseille
+## Notes: Suivi de l'or gagné, dépensé et possédé par personnage et au total, avec courbe par période.
+## Author: frederick
+## Version: 0.1.0
+## SavedVariables: OseilleDB
+## IconTexture: Interface\ICONS\INV_Misc_Coin_01
+
+Database.lua
+Graph.lua
+Tracking.lua
+UI.lua
+Minimap.lua
+Core.lua

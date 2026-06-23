@@ -1,0 +1,10 @@
+# OS / éditeurs
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.vscode/
+
+# Sauvegardes WoW (ne doivent pas être versionnées)
+*.bak
+WTF/
